@@ -1,0 +1,56 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+Load data
+```{r}
+library(readr)
+library(tidyverse)
+library(tm)
+library(corpus)
+master_df <- read_csv("C:/Users/Aksel Roald/OneDrive - Aarhus universitet/5. semester/Cultural data science/master_updated.csv")
+View(master_df)
+master_df 
+```
+
+Cleaning
+```{r}
+unique_titles <- unique(master_df$title)
+master_df_unique <- distinct(master_df, title, .keep_all = T)
+
+#remove NA's (Done)
+master_df_unique <- na.omit(master_df_unique)
+
+
+#remove capital letters
+master_df_unique$text <-  tolower(c(master_df_unique$text))
+master_df_unique$title <-  tolower(c(master_df_unique$title))
+
+# Combine title and text
+master_df_unique$title_and_text <- paste0(master_df_unique$title," ",master_df_unique$text)
+
+#Create corpus
+master_df_unique <- Corpus(VectorSource(master_df_unique))
+#remove stopwords
+master_df_unique = tm_map(master_df_unique, removeWords, stopwords('danish'))
+
+
+
+#Soruces
+#https://stackoverflow.com/questions/37526550/removing-stopwords-from-a-user-defined-corpus-in-r
+#https://www.youtube.com/watch?v=m8r7WtZ0voQ
+#https://www.tidytextmining.com/tidytext.html#word-frequencies
+
+```
+
+
